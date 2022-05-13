@@ -19,13 +19,13 @@ public class FirstMethodService {
 
     private final Logger logger = LoggerFactory.getLogger(FirstMethodService.class);
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     public FirstMethodService() {
         this.restTemplate = new RestTemplateBuilder().build();
     }
 
-    public ResponseEntity<FirstMethodResponseModel> method1(
+    public ResponseEntity<FirstMethodResponseModel> firstMethod(
         FirstMethodRequestModel requestDto
     ) {
 
@@ -51,32 +51,26 @@ public class FirstMethodService {
                 model.setValue(responseDtoFromSecondService.getBody().getValue());
             }
             else
-                model.setMessage("Failed.");
+                model.setMessage("Call to SecondService has failed.");
 
             logger.info("POST request to SecondService is executed successfully.");
 
-            ResponseEntity<FirstMethodResponseModel> responseDto =
-                new ResponseEntity(model, statusCode);
-
-            return responseDto;
+            return new ResponseEntity(model, statusCode);
         }
         catch (Exception e) {
             logger.error(e.getMessage());
 
             FirstMethodResponseModel model = new FirstMethodResponseModel();
+            model.setMessage(e.getMessage());
 
-            ResponseEntity<FirstMethodResponseModel> responseDto =
-                new ResponseEntity(model, HttpStatus.INTERNAL_SERVER_ERROR);
-
-            return responseDto;
+            return new ResponseEntity(model, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     private ResponseEntity<FirstMethodResponseModel> makeRequestToSecondService(
         FirstMethodRequestModel requestDto
     ) {
-        // String url = "http://second.second.svc.cluster.local:8080/second";
-        String url = "http://localhost:8081/second";
+        String url = "http://second.second.svc.cluster.local:8080/second";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
