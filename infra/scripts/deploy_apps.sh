@@ -24,6 +24,18 @@ first["name"]="first"
 first["namespace"]="first"
 first["port"]=8080
 
+# Second
+declare -A second
+first["name"]="second"
+first["namespace"]="second"
+first["port"]=8080
+
+# Third
+declare -A third
+first["name"]="third"
+first["namespace"]="third"
+first["port"]=8080
+
 ### Build & Push
 
 # First
@@ -34,6 +46,24 @@ docker build \
     --tag "${DOCKERHUB_NAME}/${first[name]}" \
     ../../apps/first/.
 docker push "${DOCKERHUB_NAME}/${first[name]}"
+echo -e "\n------\n"
+
+# Second
+echo -e "\n--- SECOND ---\n"
+docker build \
+    --tag "${DOCKERHUB_NAME}/${second[name]}" \
+    ../../apps/second/.
+docker push "${DOCKERHUB_NAME}/${second[name]}"
+echo -e "\n------\n"
+
+# Third
+echo -e "\n--- THIRD ---\n"
+docker build \
+    --build-arg newRelicAppName=${third[name]} \
+    --build-arg newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
+    --tag "${DOCKERHUB_NAME}/${third[name]}" \
+    ../../apps/third/.
+docker push "${DOCKERHUB_NAME}/${third[name]}"
 echo -e "\n------\n"
 
 # Newrelic
@@ -95,3 +125,27 @@ helm upgrade ${first[name]} \
     --namespace ${first[namespace]} \
     --set dockerhubName=$DOCKERHUB_NAME \
     ../charts/first
+
+# Second
+echo "Deploying second ..."
+
+helm upgrade ${second[name]} \
+    --install \
+    --wait \
+    --debug \
+    --create-namespace \
+    --namespace ${second[namespace]} \
+    --set dockerhubName=$DOCKERHUB_NAME \
+    ../charts/second
+
+# Third
+echo "Deploying third ..."
+
+helm upgrade ${third[name]} \
+    --install \
+    --wait \
+    --debug \
+    --create-namespace \
+    --namespace ${third[namespace]} \
+    --set dockerhubName=$DOCKERHUB_NAME \
+    ../charts/third
