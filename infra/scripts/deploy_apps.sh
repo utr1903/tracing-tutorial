@@ -26,15 +26,15 @@ first["port"]=8080
 
 # Second
 declare -A second
-first["name"]="second"
-first["namespace"]="second"
-first["port"]=8080
+second["name"]="second"
+second["namespace"]="second"
+second["port"]=8080
 
 # Third
 declare -A third
-first["name"]="third"
-first["namespace"]="third"
-first["port"]=8080
+third["name"]="third"
+third["namespace"]="third"
+third["port"]=8080
 
 ### Build & Push
 
