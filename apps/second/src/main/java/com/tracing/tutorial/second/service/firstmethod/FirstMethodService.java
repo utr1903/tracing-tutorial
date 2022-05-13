@@ -1,6 +1,5 @@
 package com.tracing.tutorial.second.service.firstmethod;
 
-import com.tracing.tutorial.second.dto.BaseResponseDto;
 import com.tracing.tutorial.second.service.firstmethod.dto.FirstMethodRequestModel;
 import com.tracing.tutorial.second.service.firstmethod.dto.FirstMethodResponseModel;
 import org.slf4j.Logger;
@@ -8,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,19 +18,18 @@ public class FirstMethodService {
 
     public FirstMethodService() {}
 
-    public BaseResponseDto<FirstMethodResponseModel> firstMethod(
-            FirstMethodRequestModel requestDto
+    public ResponseEntity<FirstMethodResponseModel> firstMethod(
+        FirstMethodRequestModel requestDto
     ) {
 
         logger.info("Value provided: " + requestDto.getValue());
 
         FirstMethodResponseModel model = new FirstMethodResponseModel();
+        model.setMessage("Succeeded.");
         model.setValue(requestDto.getValue());
 
-        BaseResponseDto<FirstMethodResponseModel> responseDto = new BaseResponseDto();
-        responseDto.setStatusCode(HttpStatus.OK.value());
-        responseDto.setMessage("Succeeded");
-        responseDto.setData(model);
+        ResponseEntity<FirstMethodResponseModel> responseDto =
+            new ResponseEntity(model, HttpStatus.OK);
 
         return responseDto;
     }

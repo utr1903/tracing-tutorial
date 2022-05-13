@@ -1,6 +1,5 @@
 package com.tracing.tutorial.first.service.second;
 
-import com.tracing.tutorial.first.dto.BaseResponseDto;
 import com.tracing.tutorial.first.service.second.dto.FirstMethodRequestModel;
 import com.tracing.tutorial.first.service.second.dto.FirstMethodResponseModel;
 import org.slf4j.Logger;
@@ -26,35 +25,58 @@ public class SecondService {
         this.restTemplate = new RestTemplateBuilder().build();
     }
 
-    public BaseResponseDto<FirstMethodResponseModel> method1(
+    public ResponseEntity<FirstMethodResponseModel> method1(
         FirstMethodRequestModel requestDto
     ) {
 
         logger.info("Value provided: " + requestDto.getValue());
 
-        logger.info("Making a POST request to SecondService...");
+        ResponseEntity<FirstMethodResponseModel> responseDtoFromSecondService;
 
-        BaseResponseDto<FirstMethodResponseModel> responseDtoFromSecondService =
-            makeRequestToSecondService(requestDto);
+        try {
+            FirstMethodResponseModel model = new FirstMethodResponseModel();
 
-        logger.info("POST request to SecondService is executed successfully.");
+            logger.info("Making a POST request to SecondService...");
 
-        logger.info("Value retrieved: " + responseDtoFromSecondService.getData().getValue());
+            responseDtoFromSecondService = makeRequestToSecondService(requestDto);
 
-        FirstMethodResponseModel model = new FirstMethodResponseModel();
+            HttpStatus statusCode = responseDtoFromSecondService.getStatusCode();
+            logger.info("Status code: " + statusCode);
+            logger.info("Message: " + responseDtoFromSecondService.getBody().getMessage());
 
-        BaseResponseDto<FirstMethodResponseModel> responseDto = new BaseResponseDto();
-        responseDto.setStatusCode(HttpStatus.OK.value());
-        responseDto.setMessage("Succeeded");
-        responseDto.setData(model);
+            if (statusCode == HttpStatus.OK) {
+                logger.info("Value retrieved: " + responseDtoFromSecondService.getBody().getValue());
 
-        return responseDto;
+                model.setMessage("Succeeded.");
+                model.setValue(responseDtoFromSecondService.getBody().getValue());
+            }
+            else
+                model.setMessage("Failed.");
+
+            logger.info("POST request to SecondService is executed successfully.");
+
+            ResponseEntity<FirstMethodResponseModel> responseDto =
+                new ResponseEntity(model, statusCode);
+
+            return responseDto;
+        }
+        catch (Exception e) {
+            logger.error(e.getMessage());
+
+            FirstMethodResponseModel model = new FirstMethodResponseModel();
+
+            ResponseEntity<FirstMethodResponseModel> responseDto =
+                new ResponseEntity(model, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return responseDto;
+        }
     }
 
-    private BaseResponseDto<FirstMethodResponseModel> makeRequestToSecondService(
+    private ResponseEntity<FirstMethodResponseModel> makeRequestToSecondService(
         FirstMethodRequestModel requestDto
     ) {
-        String url = "http://second.second.svc.cluster.local:8080/second";
+        // String url = "http://second.second.svc.cluster.local:8080/second";
+        String url = "http://localhost:8081/second";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -62,6 +84,6 @@ public class SecondService {
 
         HttpEntity<FirstMethodRequestModel> entity = new HttpEntity<>(requestDto, headers);
 
-        return restTemplate.postForObject(url, entity, BaseResponseDto.class);
+        return restTemplate.postForEntity(url, entity, FirstMethodResponseModel.class);
     }
 }

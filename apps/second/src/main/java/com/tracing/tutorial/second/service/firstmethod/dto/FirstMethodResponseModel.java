@@ -1,6 +1,8 @@
 package com.tracing.tutorial.second.service.firstmethod.dto;
 
-public class FirstMethodResponseModel {
+import com.tracing.tutorial.second.dto.BaseResponseDto;
+
+public class FirstMethodResponseModel extends BaseResponseDto {
 
     private String value;
 
