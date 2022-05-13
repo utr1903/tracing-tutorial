@@ -10,4 +10,4 @@ COPY --from=build /home/app/target/second-0.0.1-SNAPSHOT.jar /usr/local/lib/seco
 
 EXPOSE 8080
 
-ENTRYPOINT ["java","-javaagent:/usr/local/lib/newrelic.jar","-jar","/usr/local/lib/second.jar"]
+ENTRYPOINT ["java","-jar","/usr/local/lib/second.jar"]
