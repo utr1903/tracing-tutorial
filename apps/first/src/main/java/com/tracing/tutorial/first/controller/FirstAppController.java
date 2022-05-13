@@ -1,9 +1,8 @@
 package com.tracing.tutorial.first.controller;
 
-import com.tracing.tutorial.first.dto.BaseResponseDto;
-import com.tracing.tutorial.first.service.second.dto.FirstMethodRequestModel;
-import com.tracing.tutorial.first.service.second.dto.FirstMethodResponseModel;
-import com.tracing.tutorial.first.service.second.SecondService;
+import com.tracing.tutorial.first.service.firstmethod.dto.FirstMethodRequestModel;
+import com.tracing.tutorial.first.service.firstmethod.dto.FirstMethodResponseModel;
+import com.tracing.tutorial.first.service.firstmethod.FirstMethodService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("first")
-public class FirstController {
+public class FirstAppController {
 
-    private final Logger logger = LoggerFactory.getLogger(FirstController.class);
+    private final Logger logger = LoggerFactory.getLogger(FirstAppController.class);
 
     @Autowired
-    private SecondService secondService;
+    private FirstMethodService secondService;
 
     @PostMapping
     public ResponseEntity<FirstMethodResponseModel> method1(

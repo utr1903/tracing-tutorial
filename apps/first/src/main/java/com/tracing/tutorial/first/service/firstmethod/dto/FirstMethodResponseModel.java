@@ -1,4 +1,4 @@
-package com.tracing.tutorial.first.service.second.dto;
+package com.tracing.tutorial.first.service.firstmethod.dto;
 
 import com.tracing.tutorial.first.dto.BaseResponseDto;
 

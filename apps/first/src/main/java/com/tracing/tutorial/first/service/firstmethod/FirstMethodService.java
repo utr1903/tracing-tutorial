@@ -1,7 +1,7 @@
-package com.tracing.tutorial.first.service.second;
+package com.tracing.tutorial.first.service.firstmethod;
 
-import com.tracing.tutorial.first.service.second.dto.FirstMethodRequestModel;
-import com.tracing.tutorial.first.service.second.dto.FirstMethodResponseModel;
+import com.tracing.tutorial.first.service.firstmethod.dto.FirstMethodRequestModel;
+import com.tracing.tutorial.first.service.firstmethod.dto.FirstMethodResponseModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -15,13 +15,13 @@ import java.util.Collections;
 
 @Service
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class SecondService {
+public class FirstMethodService {
 
-    private final Logger logger = LoggerFactory.getLogger(SecondService.class);
+    private final Logger logger = LoggerFactory.getLogger(FirstMethodService.class);
 
     private RestTemplate restTemplate;
 
-    public SecondService() {
+    public FirstMethodService() {
         this.restTemplate = new RestTemplateBuilder().build();
     }
 
