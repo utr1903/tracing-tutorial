@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("second")
-public class SecondController {
+public class SecondAppController {
 
-    private final Logger logger = LoggerFactory.getLogger(SecondController.class);
+    private final Logger logger = LoggerFactory.getLogger(SecondAppController.class);
 
     @Autowired
     private FirstMethodService firstMethodService;
