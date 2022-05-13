@@ -1,14 +1,14 @@
 package com.tracing.tutorial.first.service.second;
 
 import com.tracing.tutorial.first.dto.BaseResponseDto;
-import com.tracing.tutorial.first.service.second.dto.SecondRequestModel;
-import com.tracing.tutorial.first.service.second.dto.SecondResponseModel;
+import com.tracing.tutorial.first.service.second.dto.FirstMethodRequestModel;
+import com.tracing.tutorial.first.service.second.dto.FirstMethodResponseModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,7 +18,7 @@ import java.util.Collections;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SecondService {
 
-    private Logger logger = LoggerFactory.getLogger(SecondService.class);
+    private final Logger logger = LoggerFactory.getLogger(SecondService.class);
 
     private RestTemplate restTemplate;
 
@@ -26,17 +26,24 @@ public class SecondService {
         this.restTemplate = new RestTemplateBuilder().build();
     }
 
-    public BaseResponseDto<SecondResponseModel> method1(
-        SecondRequestModel requestDto
+    public BaseResponseDto<FirstMethodResponseModel> method1(
+        FirstMethodRequestModel requestDto
     ) {
+
+        logger.info("Value provided: " + requestDto.getValue());
 
         logger.info("Making a POST request to SecondService...");
 
+        BaseResponseDto<FirstMethodResponseModel> responseDtoFromSecondService =
+            makeRequestToSecondService(requestDto);
+
         logger.info("POST request to SecondService is executed successfully.");
 
-        SecondResponseModel model = new SecondResponseModel();
+        logger.info("Value retrieved: " + responseDtoFromSecondService.getData().getValue());
 
-        BaseResponseDto<SecondResponseModel> responseDto = new BaseResponseDto();
+        FirstMethodResponseModel model = new FirstMethodResponseModel();
+
+        BaseResponseDto<FirstMethodResponseModel> responseDto = new BaseResponseDto();
         responseDto.setStatusCode(HttpStatus.OK.value());
         responseDto.setMessage("Succeeded");
         responseDto.setData(model);
@@ -44,21 +51,17 @@ public class SecondService {
         return responseDto;
     }
 
-//    private void makeRequestToSecondService() {
-//        String url = "https://jsonplaceholder.typicode.com/posts";
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-//
-//        // create a post object
-//        Post post = new Post(1, "Introduction to Spring Boot",
-//                "Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications.");
-//
-//        // build the request
-//        HttpEntity<Post> entity = new HttpEntity<>(post, headers);
-//
-//        // send POST request
-//        return restTemplate.postForObject(url, entity, Post.class);
-//    }
+    private BaseResponseDto<FirstMethodResponseModel> makeRequestToSecondService(
+        FirstMethodRequestModel requestDto
+    ) {
+        String url = "http://second.second.svc.cluster.local:8080/second";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        HttpEntity<FirstMethodRequestModel> entity = new HttpEntity<>(requestDto, headers);
+
+        return restTemplate.postForObject(url, entity, BaseResponseDto.class);
+    }
 }
