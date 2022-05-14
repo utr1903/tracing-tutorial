@@ -19,18 +19,18 @@ public class ThirdAppController {
     private final Logger logger = LoggerFactory.getLogger(ThirdAppController.class);
 
     @Autowired
-    private SecondMethodService firstMethodService;
+    private SecondMethodService secondMethodService;
 
     @PostMapping
-    public ResponseEntity<SecondMethodResponseModel> firstMethod(
+    public ResponseEntity<SecondMethodResponseModel> secondMethod(
             @RequestBody SecondMethodRequestModel requestDto
     ) {
-        logger.info("First Method is triggered...");
+        logger.info("Second Method is triggered...");
 
         ResponseEntity<SecondMethodResponseModel> responseDto =
-                firstMethodService.firstMethod(requestDto);
+                secondMethodService.secondMethod(requestDto);
 
-        logger.info("First Method is executed successfully...");
+        logger.info("Second Method is executed successfully...");
 
         return responseDto;
     }

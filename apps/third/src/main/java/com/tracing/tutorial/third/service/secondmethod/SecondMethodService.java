@@ -18,7 +18,7 @@ public class SecondMethodService {
 
     public SecondMethodService() {}
 
-    public ResponseEntity<SecondMethodResponseModel> firstMethod(
+    public ResponseEntity<SecondMethodResponseModel> secondMethod(
             SecondMethodRequestModel requestDto
     ) {
 
