@@ -1,4 +1,4 @@
-package com.tracing.tutorial.third.service.secondmethod.dto;
+package com.tracing.tutorial.first.service.secondmethod.dto;
 
 public class SecondMethodRequestModel {
 

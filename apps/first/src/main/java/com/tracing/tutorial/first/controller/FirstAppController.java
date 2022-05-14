@@ -3,6 +3,9 @@ package com.tracing.tutorial.first.controller;
 import com.tracing.tutorial.first.service.firstmethod.FirstMethodService;
 import com.tracing.tutorial.first.service.firstmethod.dto.FirstMethodRequestModel;
 import com.tracing.tutorial.first.service.firstmethod.dto.FirstMethodResponseModel;
+import com.tracing.tutorial.first.service.secondmethod.SecondMethodService;
+import com.tracing.tutorial.first.service.secondmethod.dto.SecondMethodRequestModel;
+import com.tracing.tutorial.first.service.secondmethod.dto.SecondMethodResponseModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,18 +22,35 @@ public class FirstAppController {
     private final Logger logger = LoggerFactory.getLogger(FirstAppController.class);
 
     @Autowired
-    private FirstMethodService secondService;
+    private FirstMethodService firstMethodService;
 
-    @PostMapping
+    @Autowired
+    private SecondMethodService secondMethodService;
+
+    @PostMapping("method1")
     public ResponseEntity<FirstMethodResponseModel> firstMethod(
         @RequestBody FirstMethodRequestModel requestDto
     ) {
-        logger.info("Method 1 is triggered...");
+        logger.info("First method is triggered...");
 
         ResponseEntity<FirstMethodResponseModel> responseDto =
-                secondService.firstMethod(requestDto);
+                firstMethodService.firstMethod(requestDto);
 
-        logger.info("Method 1 is executed successfully...");
+        logger.info("First method is executed successfully...");
+
+        return responseDto;
+    }
+
+    @PostMapping("method2")
+    public ResponseEntity<SecondMethodResponseModel> secondMethod(
+            @RequestBody SecondMethodRequestModel requestDto
+    ) {
+        logger.info("Second method is triggered...");
+
+        ResponseEntity<SecondMethodResponseModel> responseDto =
+                secondMethodService.secondMethod(requestDto);
+
+        logger.info("Second method is executed successfully...");
 
         return responseDto;
     }

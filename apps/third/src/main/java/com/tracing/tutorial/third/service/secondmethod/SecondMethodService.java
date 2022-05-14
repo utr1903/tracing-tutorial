@@ -23,10 +23,12 @@ public class SecondMethodService {
     ) {
 
         logger.info("Value provided: " + requestDto.getValue());
+        logger.info("Tag provided: " + requestDto.getTag());
 
         SecondMethodResponseModel model = new SecondMethodResponseModel();
         model.setMessage("Succeeded.");
         model.setValue(requestDto.getValue());
+        model.setTag(requestDto.getTag());
 
         ResponseEntity<SecondMethodResponseModel> responseDto =
             new ResponseEntity(model, HttpStatus.OK);
