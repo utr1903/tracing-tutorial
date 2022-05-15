@@ -11,7 +11,7 @@ spec:
   rules:
   - http:
       paths:
-        - path: /fourth(/|$)(.*)
+        - path: /zipkin(/|$)(.*)
           pathType: Prefix
           backend:
             service:

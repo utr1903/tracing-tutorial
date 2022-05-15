@@ -18,29 +18,30 @@ instance="001"
 # AKS
 aksName="aks-$program-$locationShort-$project-$stageShort-$instance"
 
+# Zipkin
+declare -A zipkin
+zipkin["name"]="zipkin"
+zipkin["namespace"]="zipkin"
+
 # First
 declare -A first
 first["name"]="first"
 first["namespace"]="first"
-first["port"]=8080
 
 # Second
 declare -A second
 second["name"]="second"
 second["namespace"]="second"
-second["port"]=8080
 
 # Third
 declare -A third
 third["name"]="third"
 third["namespace"]="third"
-third["port"]=8080
 
 # Fourth
 declare -A fourth
 fourth["name"]="fourth"
 fourth["namespace"]="fourth"
-fourth["port"]=8080
 
 ### Build & Push
 
@@ -79,7 +80,6 @@ docker build \
     ../../apps/fourth/.
 docker push "${DOCKERHUB_NAME}/${fourth[name]}"
 echo -e "\n------\n"
-
 
 # Newrelic
 echo "Deploying Newrelic ..."
@@ -128,6 +128,18 @@ helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
     --set defaultBackend.image.image="defaultbackend-amd64" \
     --set defaultBackend.image.tag="1.5" \
     --set defaultBackend.image.digest=""
+
+# Zipkin
+echo "Deploying Zipkin ..."
+
+helm upgrade ${zipkin[name]} \
+    --install \
+    --wait \
+    --debug \
+    --create-namespace \
+    --namespace ${zipkin[namespace]} \
+    --set dockerhubName=$DOCKERHUB_NAME \
+    ../charts/zipkin
 
 # First
 echo "Deploying first ..."

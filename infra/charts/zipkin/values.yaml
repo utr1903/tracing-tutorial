@@ -1,0 +1,16 @@
+name: zipkin
+namespace: zipkin
+image: openzipkin/zipkin
+port: 9411
+
+hpa:
+  minReplicas: 1
+  maxReplicas: 5
+
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 25
