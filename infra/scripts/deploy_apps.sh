@@ -36,6 +36,12 @@ third["name"]="third"
 third["namespace"]="third"
 third["port"]=8080
 
+# Fourth
+declare -A fourth
+fourth["name"]="fourth"
+fourth["namespace"]="fourth"
+fourth["port"]=8080
+
 ### Build & Push
 
 # First
@@ -65,6 +71,15 @@ docker build \
     ../../apps/third/.
 docker push "${DOCKERHUB_NAME}/${third[name]}"
 echo -e "\n------\n"
+
+# Fourth
+echo -e "\n--- FOURTH ---\n"
+docker build \
+    --tag "${DOCKERHUB_NAME}/${fourth[name]}" \
+    ../../apps/fourth/.
+docker push "${DOCKERHUB_NAME}/${fourth[name]}"
+echo -e "\n------\n"
+
 
 # Newrelic
 echo "Deploying Newrelic ..."
@@ -149,3 +164,15 @@ helm upgrade ${third[name]} \
     --namespace ${third[namespace]} \
     --set dockerhubName=$DOCKERHUB_NAME \
     ../charts/third
+
+# Fourth
+echo "Deploying fourth ..."
+
+helm upgrade ${fourth[name]} \
+    --install \
+    --wait \
+    --debug \
+    --create-namespace \
+    --namespace ${fourth[namespace]} \
+    --set dockerhubName=$DOCKERHUB_NAME \
+    ../charts/fourth
