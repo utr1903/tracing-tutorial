@@ -43,6 +43,11 @@ declare -A fourth
 fourth["name"]="fourth"
 fourth["namespace"]="fourth"
 
+# Fifth
+declare -A fifth
+fifth["name"]="fifth"
+fifth["namespace"]="fifth"
+
 ### Build & Push
 
 # First
@@ -79,6 +84,14 @@ docker build \
     --tag "${DOCKERHUB_NAME}/${fourth[name]}" \
     ../../apps/fourth/.
 docker push "${DOCKERHUB_NAME}/${fourth[name]}"
+echo -e "\n------\n"
+
+# Fifth
+echo -e "\n--- FIFTH ---\n"
+docker build \
+    --tag "${DOCKERHUB_NAME}/${fifth[name]}" \
+    ../../apps/fourth/.
+docker push "${DOCKERHUB_NAME}/${fifth[name]}"
 echo -e "\n------\n"
 
 # Newrelic
@@ -188,3 +201,15 @@ helm upgrade ${fourth[name]} \
     --namespace ${fourth[namespace]} \
     --set dockerhubName=$DOCKERHUB_NAME \
     ../charts/fourth
+
+# Fifth
+echo "Deploying fifth ..."
+
+helm upgrade ${fifth[name]} \
+    --install \
+    --wait \
+    --debug \
+    --create-namespace \
+    --namespace ${fifth[namespace]} \
+    --set dockerhubName=$DOCKERHUB_NAME \
+    ../charts/fifth
