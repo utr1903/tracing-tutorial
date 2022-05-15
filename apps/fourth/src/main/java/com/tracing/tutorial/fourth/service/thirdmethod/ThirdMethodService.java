@@ -18,8 +18,8 @@ public class ThirdMethodService {
 
     public ThirdMethodService() {}
 
-    public ResponseEntity<ThirdMethodResponseModel> firstMethod(
-            ThirdMethodRequestModel requestDto
+    public ResponseEntity<ThirdMethodResponseModel> thirdMethod(
+        ThirdMethodRequestModel requestDto
     ) {
 
         logger.info("Value provided: " + requestDto.getValue());
