@@ -37,7 +37,8 @@ public class ZipkinProcessor implements CommandLineRunner {
                 }
             }
 
-            sendZipkinTracesToNewrelic(allTraces);
+            if (!allTraces.isEmpty())
+                sendZipkinTracesToNewrelic(allTraces);
 
             logger.info(" -> Waiting for " + INTERVAL + "ms till next fetch...");
             Thread.sleep(INTERVAL);
@@ -71,35 +72,46 @@ public class ZipkinProcessor implements CommandLineRunner {
         List<List<ZipkinTrace>> allTraces
     ) {
 
-        logger.info("Sending Zipkin traces to Newrelic...");
+        try {
+            logger.info("Sending Zipkin traces to Newrelic...");
 
-        String url = "https://trace-api.newrelic.com/trace/v1";
+            String url = "https://trace-api.newrelic.com/trace/v1";
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        headers.set("ApiKey", System.getenv("NEWRELIC_LICENSE_KEY"));
-        headers.set("Data-Format", "zipkin");
-        headers.set("Data-Format-Version", "2");
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+            headers.set("Api-Key", System.getenv("NEWRELIC_API_KEY"));
+            headers.set("Data-Format", "zipkin");
+            headers.set("Data-Format-Version", "2");
 
-        for (List<ZipkinTrace> traces : allTraces) {
+            for (List<ZipkinTrace> traces : allTraces) {
 
-            String traceId = traces.get(0).getTraceId();
-            logger.info(" -> Sending trace with trace ID: " + traceId + "...");
+                String traceId = traces.get(0).getTags().containsKey("existingTraceId") ?
+                    traces.get(0).getTags().get("existingTraceId") :
+                    traces.get(0).getTraceId();
 
-            HttpEntity<List<ZipkinTrace>> entity = new HttpEntity<>(traces, headers);
+                traces.stream().forEach(x -> x.setTraceId(traceId));
 
-            ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+                logger.info(" -> Sending trace with trace ID: " + traceId + "...");
 
-            if (response.getStatusCode() == HttpStatus.OK ||
-                response.getStatusCode() == HttpStatus.CREATED) {
-                logger.info(" -> Zipkin traces are sent successfully.");
-                logger.info("Response: " + response.getBody());
+                HttpEntity<List<ZipkinTrace>> entity = new HttpEntity<>(traces, headers);
+
+                ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+
+                if (response.getStatusCode() == HttpStatus.OK ||
+                        response.getStatusCode() == HttpStatus.CREATED) {
+                    logger.info(" -> Zipkin traces are sent successfully.");
+                    logger.info("Response: " + response.getBody());
+                }
+                else {
+                    logger.error(" -> Zipkin traces could not be sent.");
+                    logger.error("Error: " + response.getBody());
+                }
             }
-            else {
-                logger.error(" -> Zipkin traces could not be sent.");
-                logger.error("Error: " + response.getBody());
-            }
+        }
+        catch (Exception e) {
+            logger.error(" -> Zipkin traces could not be sent.");
+            logger.error("Error: " + e.getMessage());
         }
     }
 }
