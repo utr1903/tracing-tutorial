@@ -6,6 +6,9 @@ import com.tracing.tutorial.first.service.firstmethod.dto.FirstMethodResponseMod
 import com.tracing.tutorial.first.service.secondmethod.SecondMethodService;
 import com.tracing.tutorial.first.service.secondmethod.dto.SecondMethodRequestModel;
 import com.tracing.tutorial.first.service.secondmethod.dto.SecondMethodResponseModel;
+import com.tracing.tutorial.first.service.thirdmethod.ThirdMethodService;
+import com.tracing.tutorial.first.service.thirdmethod.dto.ThirdMethodRequestModel;
+import com.tracing.tutorial.first.service.thirdmethod.dto.ThirdMethodResponseModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,9 @@ public class FirstAppController {
 
     @Autowired
     private SecondMethodService secondMethodService;
+
+    @Autowired
+    private ThirdMethodService thirdMethodService;
 
     @PostMapping("method1")
     public ResponseEntity<FirstMethodResponseModel> firstMethod(
@@ -51,6 +57,20 @@ public class FirstAppController {
                 secondMethodService.secondMethod(requestDto);
 
         logger.info("Second method is executed successfully...");
+
+        return responseDto;
+    }
+
+    @PostMapping("method3")
+    public ResponseEntity<ThirdMethodResponseModel> thirdMethod(
+            @RequestBody ThirdMethodRequestModel requestDto
+    ) {
+        logger.info("Third method is triggered...");
+
+        ResponseEntity<ThirdMethodResponseModel> responseDto =
+                thirdMethodService.thirdMethod(requestDto);
+
+        logger.info("Third method is executed successfully...");
 
         return responseDto;
     }
