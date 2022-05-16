@@ -11,7 +11,7 @@ locationShort="euw"
 project="tracing"
 stageLong="dev"
 stageShort="d"
-instance="001"
+instance="002"
 
 ### Set variables
 
