@@ -16,8 +16,8 @@ spec:
         - name: {{ .Values.name }}
           image: "{{ .Values.dockerhubName }}/{{ .Values.name }}"
           env:
-          - name: NEWRELIC_API_KEY
-            value: {{ .Values.newRelicApiKey }}
+          - name: NEWRELIC_LICENSE_KEY
+            value: {{ .Values.newRelicLicenseKey }}
           ports:
             - protocol: TCP
               containerPort: {{ .Values.port }}
