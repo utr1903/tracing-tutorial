@@ -90,7 +90,7 @@ echo -e "\n------\n"
 echo -e "\n--- FIFTH ---\n"
 docker build \
     --tag "${DOCKERHUB_NAME}/${fifth[name]}" \
-    ../../apps/fourth/.
+    ../../apps/fifth/.
 docker push "${DOCKERHUB_NAME}/${fifth[name]}"
 echo -e "\n------\n"
 
