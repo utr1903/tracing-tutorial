@@ -24,12 +24,11 @@ public class ThirdMethodService {
 
         logger.info("Value provided: " + requestDto.getValue());
 
-        ThirdMethodResponseModel model = new ThirdMethodResponseModel();
+        var model = new ThirdMethodResponseModel();
         model.setMessage("Succeeded.");
         model.setValue(requestDto.getValue());
 
-        ResponseEntity<ThirdMethodResponseModel> responseDto =
-            new ResponseEntity(model, HttpStatus.OK);
+        var responseDto = new ResponseEntity(model, HttpStatus.OK);
 
         return responseDto;
     }
