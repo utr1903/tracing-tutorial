@@ -75,7 +75,7 @@ public class ZipkinProcessor implements CommandLineRunner {
         try {
             logger.info("Sending Zipkin traces to Newrelic...");
 
-            String url = "https://trace-api.newrelic.com/trace/v1";
+            String url = "https://trace-api.eu.newrelic.com/trace/v1";
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
