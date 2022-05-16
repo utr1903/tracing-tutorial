@@ -80,7 +80,7 @@ public class ZipkinProcessor implements CommandLineRunner {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-            headers.set("Api-Key", System.getenv("NEWRELIC_API_KEY"));
+            headers.set("Api-Key", System.getenv("NEWRELIC_LICENSE_KEY"));
             headers.set("Data-Format", "zipkin");
             headers.set("Data-Format-Version", "2");
 
@@ -98,19 +98,20 @@ public class ZipkinProcessor implements CommandLineRunner {
 
                 ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
 
-                if (response.getStatusCode() == HttpStatus.OK ||
-                        response.getStatusCode() == HttpStatus.CREATED) {
+                logger.info(" -> Status Code: " + response.getStatusCode());
+
+                if (response.getStatusCode() == HttpStatus.ACCEPTED) {
                     logger.info(" -> Zipkin traces are sent successfully.");
                     logger.info("Response: " + response.getBody());
                 }
                 else {
-                    logger.error(" -> Zipkin traces could not be sent.");
+                    logger.error(" -> Request is unsuccessful. Zipkin traces could not be sent.");
                     logger.error("Error: " + response.getBody());
                 }
             }
         }
         catch (Exception e) {
-            logger.error(" -> Zipkin traces could not be sent.");
+            logger.error(" -> Unexpected error occurred. Zipkin traces could not be sent.");
             logger.error("Error: " + e.getMessage());
         }
     }
