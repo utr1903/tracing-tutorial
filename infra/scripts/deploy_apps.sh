@@ -166,6 +166,28 @@ helm upgrade ${first[name]} \
     --set dockerhubName=$DOCKERHUB_NAME \
     ../charts/first
 
+appIdOfFirst=$(curl -X GET 'https://api.eu.newrelic.com/v2/applications.json' \
+    -H "Api-Key:${NEWRELIC_API_KEY}" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    | jq -r '.applications[] | select(.name==''"'${first[name]}'"'') | .id')
+
+timestampOfFirst=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+curl -X POST "https://api.eu.newrelic.com/v2/applications/$appIdOfFirst/deployments.json" \
+     -i \
+     -H "Api-Key:${NEWRELIC_API_KEY}" \
+     -H "Content-Type: application/json" \
+     -d \
+    '{
+        "deployment": {
+            "revision": "1.0.0",
+            "changelog": "Initial deployment",
+            "description": "Deploy the first app for the first time.",
+            "user": "datanerd@example.com",
+            "timestamp": "'"${timestampOfFirst}"'"
+        }
+    }'
+
 # Second
 echo "Deploying second ..."
 
