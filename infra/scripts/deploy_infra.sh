@@ -14,9 +14,9 @@ stageShort="d"
 instance="001"
 
 kubernetesVersion="1.23.5"
-kubernetesMasterNodeCount="3"
-kubernetesMasterNodeCountMin="2"
-kubernetesMasterNodeCountMax="5"
+kubernetesMasterNodeCount="1"
+kubernetesMasterNodeCountMin="1"
+kubernetesMasterNodeCountMax="3"
 
 ### Variables
 resourceGroupName="rg-$program-$locationShort-$project-$stageShort-$instance"
