@@ -46,11 +46,35 @@ public class ZipkinProcessor implements CommandLineRunner {
 
         logger.info("Fetching Zipkin traces...");
 
-        String url = "http://zipkin.zipkin.svc.cluster.local:9411/traces";
+        String url = "http://zipkin.zipkin.svc.cluster.local:9411/api/v2/traces";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        HttpEntity entity = new HttpEntity<>(headers);
+
+        ResponseEntity<List<List<ZipkinTrace>>> response = restTemplate.exchange(url, HttpMethod.GET, entity,
+                new ParameterizedTypeReference<List<List<ZipkinTrace>>>() {
+                });
+
+        logger.info("Zipkin traces are fetched successfully.");
+
+        return response.getBody();
+    }
+
+    private List<List<ZipkinTrace>> sendZipkinTracesToNewrelic() {
+
+        logger.info("Sending Zipkin traces to Newrelic...");
+
+        String url = "https://trace-api.newrelic.com/trace/v1";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        // headers.set("ApiKey", env.get("NEWRELIC_LICENSE_KEY"));
+        // headers.set("Data-Format", "zipkin");
+        // headers.set("Data-Format-Version", "2");
 
         HttpEntity entity = new HttpEntity<>(headers);
 
