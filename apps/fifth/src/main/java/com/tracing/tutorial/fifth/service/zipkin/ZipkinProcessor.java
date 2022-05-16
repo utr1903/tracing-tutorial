@@ -1,5 +1,6 @@
 package com.tracing.tutorial.fifth.service.zipkin;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.tracing.tutorial.fifth.service.zipkin.model.ZipkinTrace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +22,6 @@ public class ZipkinProcessor implements CommandLineRunner {
     @Autowired
     private RestTemplate restTemplate;
 
-    private long lastFetchTimestamp;
-
     @Override
     public void run(String... args) throws InterruptedException {
 
@@ -33,11 +32,14 @@ public class ZipkinProcessor implements CommandLineRunner {
             List<List<ZipkinTrace>> allTraces = fetchZipkinTraces();
             for (List<ZipkinTrace> traces : allTraces) {
                 for (ZipkinTrace trace : traces) {
-                    logger.info("Trace ID: " + trace.getTraceId());
-                    logger.info("Span ID : " + trace.getId());
+                    logger.info(" -> Trace ID: " + trace.getTraceId());
+                    logger.info(" -> Span ID : " + trace.getId());
                 }
             }
 
+            sendZipkinTracesToNewrelic(allTraces);
+
+            logger.info(" -> Waiting for " + INTERVAL + "ms till next fetch...");
             Thread.sleep(INTERVAL);
         }
     }
@@ -46,24 +48,28 @@ public class ZipkinProcessor implements CommandLineRunner {
 
         logger.info("Fetching Zipkin traces...");
 
-        String url = "http://zipkin.zipkin.svc.cluster.local:9411/api/v2/traces";
+        String url = "http://zipkin.zipkin.svc.cluster.local:9411/api/v2/traces?lookback="
+            + INTERVAL;
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-        HttpEntity entity = new HttpEntity<>(headers);
+        ResponseEntity<List<List<ZipkinTrace>>> response = restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            new HttpEntity<>(headers),
+            new ParameterizedTypeReference<List<List<ZipkinTrace>>>() {}
+        );
 
-        ResponseEntity<List<List<ZipkinTrace>>> response = restTemplate.exchange(url, HttpMethod.GET, entity,
-                new ParameterizedTypeReference<List<List<ZipkinTrace>>>() {
-                });
-
-        logger.info("Zipkin traces are fetched successfully.");
+        logger.info(" -> Zipkin traces are fetched successfully.");
 
         return response.getBody();
     }
 
-    private List<List<ZipkinTrace>> sendZipkinTracesToNewrelic() {
+    private void sendZipkinTracesToNewrelic(
+        List<List<ZipkinTrace>> allTraces
+    ) {
 
         logger.info("Sending Zipkin traces to Newrelic...");
 
@@ -72,18 +78,28 @@ public class ZipkinProcessor implements CommandLineRunner {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        // headers.set("ApiKey", env.get("NEWRELIC_LICENSE_KEY"));
-        // headers.set("Data-Format", "zipkin");
-        // headers.set("Data-Format-Version", "2");
+        headers.set("ApiKey", System.getenv("NEWRELIC_LICENSE_KEY"));
+        headers.set("Data-Format", "zipkin");
+        headers.set("Data-Format-Version", "2");
 
-        HttpEntity entity = new HttpEntity<>(headers);
+        for (List<ZipkinTrace> traces : allTraces) {
 
-        ResponseEntity<List<List<ZipkinTrace>>> response = restTemplate.exchange(url, HttpMethod.GET, entity,
-                new ParameterizedTypeReference<List<List<ZipkinTrace>>>() {
-                });
+            String traceId = traces.get(0).getTraceId();
+            logger.info(" -> Sending trace with trace ID: " + traceId + "...");
 
-        logger.info("Zipkin traces are fetched successfully.");
+            HttpEntity<List<ZipkinTrace>> entity = new HttpEntity<>(traces, headers);
 
-        return response.getBody();
+            ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+
+            if (response.getStatusCode() == HttpStatus.OK ||
+                response.getStatusCode() == HttpStatus.CREATED) {
+                logger.info(" -> Zipkin traces are sent successfully.");
+                logger.info("Response: " + response.getBody());
+            }
+            else {
+                logger.error(" -> Zipkin traces could not be sent.");
+                logger.error("Error: " + response.getBody());
+            }
+        }
     }
 }

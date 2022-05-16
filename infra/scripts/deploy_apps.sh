@@ -212,4 +212,5 @@ helm upgrade ${fifth[name]} \
     --create-namespace \
     --namespace ${fifth[namespace]} \
     --set dockerhubName=$DOCKERHUB_NAME \
+    --set newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
     ../charts/fifth
