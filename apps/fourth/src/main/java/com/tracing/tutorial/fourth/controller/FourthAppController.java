@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("fourth")
@@ -32,10 +33,20 @@ public class FourthAppController {
     ) {
         logger.info("Third Method is triggered...");
 
-        if (headers.containsKey("traceId")) {
+        for (var header : headers.entrySet()) {
+            logger.info("Key  : " + header.getKey());
+            logger.info("Value: " + header.getValue());
+        }
+
+        if (headers.containsKey("traceparent")) {
             logger.info("Trace ID already exists. Tagging...");
+
+            String results[] = headers.get("traceparent").trim().split("-");
+            for (var result : results)
+                logger.info(result);
+
             tracer.currentSpanCustomizer()
-                .tag("existingTraceId", headers.get("traceId"));
+                .tag("existingTraceId", results[1]);
         }
 
         ResponseEntity<ThirdMethodResponseModel> responseDto =
