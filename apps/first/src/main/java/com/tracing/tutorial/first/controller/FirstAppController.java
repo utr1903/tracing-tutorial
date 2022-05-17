@@ -12,11 +12,9 @@ import com.tracing.tutorial.first.service.thirdmethod.dto.ThirdMethodResponseMod
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("first")
@@ -33,16 +31,43 @@ public class FirstAppController {
     @Autowired
     private ThirdMethodService thirdMethodService;
 
+    @GetMapping("default")
+    public ResponseEntity<String> defaultMethod(
+            @RequestParam String name
+    ) {
+        logger.info("Default method is triggered...");
+        logger.info(" -> Name: " + name);
+
+        ResponseEntity<String> responseDto;
+
+        if (name.equalsIgnoreCase("bug")) {
+            responseDto = new ResponseEntity<>(
+                "Failed",
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+            logger.error("Default method is failed.");
+        }
+        else {
+            responseDto = new ResponseEntity<>(
+                "Succeeded",
+                HttpStatus.OK
+            );
+        }
+
+        logger.info("Default method is executed.");
+
+        return responseDto;
+    }
+
     @PostMapping("method1")
     public ResponseEntity<FirstMethodResponseModel> firstMethod(
         @RequestBody FirstMethodRequestModel requestDto
     ) {
         logger.info("First method is triggered...");
 
-        ResponseEntity<FirstMethodResponseModel> responseDto =
-                firstMethodService.firstMethod(requestDto);
+        var responseDto = firstMethodService.firstMethod(requestDto);
 
-        logger.info("First method is executed successfully...");
+        logger.info("First method is executed.");
 
         return responseDto;
     }
@@ -53,10 +78,9 @@ public class FirstAppController {
     ) {
         logger.info("Second method is triggered...");
 
-        ResponseEntity<SecondMethodResponseModel> responseDto =
-                secondMethodService.secondMethod(requestDto);
+        var responseDto = secondMethodService.secondMethod(requestDto);
 
-        logger.info("Second method is executed successfully...");
+        logger.info("Second method is executed.");
 
         return responseDto;
     }
@@ -67,10 +91,9 @@ public class FirstAppController {
     ) {
         logger.info("Third method is triggered...");
 
-        ResponseEntity<ThirdMethodResponseModel> responseDto =
-                thirdMethodService.thirdMethod(requestDto);
+        var responseDto = thirdMethodService.thirdMethod(requestDto);
 
-        logger.info("Third method is executed successfully...");
+        logger.info("Third method is executed.");
 
         return responseDto;
     }
