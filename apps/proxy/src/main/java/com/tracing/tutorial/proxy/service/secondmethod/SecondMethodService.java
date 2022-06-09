@@ -4,8 +4,8 @@ import com.tracing.tutorial.proxy.dto.RequestDto;
 import com.tracing.tutorial.proxy.dto.ResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -19,11 +19,10 @@ public class SecondMethodService {
 
     private final Logger logger = LoggerFactory.getLogger(SecondMethodService.class);
 
-    private final RestTemplate restTemplate;
+    @Autowired
+    private RestTemplate restTemplate;
 
-    public SecondMethodService() {
-        this.restTemplate = new RestTemplateBuilder().build();
-    }
+    public SecondMethodService() {}
 
     public ResponseEntity<ResponseDto> secondMethod(
         RequestDto requestDto

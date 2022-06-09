@@ -1,7 +1,6 @@
-package com.tracing.tutorial.fifth.service.zipkin;
+package com.tracing.tutorial.zipkinexporter.service.zipkin;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.tracing.tutorial.fifth.service.zipkin.model.ZipkinTrace;
+import com.tracing.tutorial.zipkinexporter.service.zipkin.model.ZipkinTrace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +28,9 @@ public class ZipkinProcessor implements CommandLineRunner {
 
         while (true) {
 
-            List<List<ZipkinTrace>> allTraces = fetchZipkinTraces();
-            for (List<ZipkinTrace> traces : allTraces) {
-                for (ZipkinTrace trace : traces) {
+            var allTraces = fetchZipkinTraces();
+            for (var traces : allTraces) {
+                for (var trace : traces) {
                     logger.info(" -> Trace ID: " + trace.getTraceId());
                     logger.info(" -> Span ID : " + trace.getId());
                 }
@@ -49,14 +48,14 @@ public class ZipkinProcessor implements CommandLineRunner {
 
         logger.info("Fetching Zipkin traces...");
 
-        String url = "http://zipkin.zipkin.svc.cluster.local:9411/api/v2/traces?lookback="
+        var url = "http://zipkinserver.third.svc.cluster.local:9411/api/v2/traces?lookback="
             + INTERVAL;
 
-        HttpHeaders headers = new HttpHeaders();
+        var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-        ResponseEntity<List<List<ZipkinTrace>>> response = restTemplate.exchange(
+        var response = restTemplate.exchange(
             url,
             HttpMethod.GET,
             new HttpEntity<>(headers),
@@ -75,28 +74,28 @@ public class ZipkinProcessor implements CommandLineRunner {
         try {
             logger.info("Sending Zipkin traces to Newrelic...");
 
-            String url = "https://trace-api.eu.newrelic.com/trace/v1";
+            var url = "https://trace-api.eu.newrelic.com/trace/v1";
 
-            HttpHeaders headers = new HttpHeaders();
+            var headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
             headers.set("Api-Key", System.getenv("NEWRELIC_LICENSE_KEY"));
             headers.set("Data-Format", "zipkin");
             headers.set("Data-Format-Version", "2");
 
-            for (List<ZipkinTrace> traces : allTraces) {
+            for (var traces : allTraces) {
 
-                String traceId = traces.get(0).getTags().containsKey("existingTraceId") ?
+                var traceId = traces.get(0).getTags().containsKey("existingTraceId") ?
                     traces.get(0).getTags().get("existingTraceId") :
                     traces.get(0).getTraceId();
 
-                traces.stream().forEach(x -> x.setTraceId(traceId));
+                traces.forEach(x -> x.setTraceId(traceId));
 
                 logger.info(" -> Sending trace with trace ID: " + traceId + "...");
 
-                HttpEntity<List<ZipkinTrace>> entity = new HttpEntity<>(traces, headers);
+                var entity = new HttpEntity<>(traces, headers);
 
-                ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+                var response = restTemplate.postForEntity(url, entity, String.class);
 
                 logger.info(" -> Status Code: " + response.getStatusCode());
 

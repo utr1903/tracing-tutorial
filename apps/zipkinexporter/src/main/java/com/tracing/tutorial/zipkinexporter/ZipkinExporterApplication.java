@@ -1,16 +1,16 @@
-package com.tracing.tutorial.fifth;
+package com.tracing.tutorial.zipkinexporter;
 
-import com.tracing.tutorial.fifth.service.zipkin.ZipkinProcessor;
+import com.tracing.tutorial.zipkinexporter.service.zipkin.ZipkinProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
-public class FifthApplication {
+public class ZipkinExporterApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FifthApplication.class, args);
+		SpringApplication.run(ZipkinExporterApplication.class, args);
 	}
 
 	@Bean
