@@ -1,5 +1,5 @@
-name: zipkin
-namespace: zipkin
+name: zipkinserver
+namespace: third
 image: openzipkin/zipkin
 port: 9411
 
