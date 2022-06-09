@@ -18,10 +18,10 @@ instance="005"
 # AKS
 aksName="aks-$program-$locationShort-$project-$stageShort-$instance"
 
-# Zipkin
-declare -A zipkin
-zipkin["name"]="zipkin"
-zipkin["namespace"]="zipkin"
+# Proxy
+declare -A proxy
+proxy["name"]="proxy"
+proxy["namespace"]="proxy"
 
 # First
 declare -A first
@@ -38,63 +38,68 @@ declare -A third
 third["name"]="third"
 third["namespace"]="third"
 
-# Fourth
-declare -A fourth
-fourth["name"]="fourth"
-fourth["namespace"]="fourth"
+# Zipkin Server
+declare -A zipkinserver
+zipkinserver["name"]="zipkinserver"
+zipkinserver["namespace"]="third"
 
-# Fifth
-declare -A fifth
-fifth["name"]="fifth"
-fifth["namespace"]="fifth"
+# Zipkin Exporter
+declare -A zipkinexporter
+zipkinexporter["name"]="zipkinexporter"
+zipkinexporter["namespace"]="third"
 
-### Build & Push
+####################
+### Build & Push ###
+####################
+
+# Proxy
+echo -e "\n--- Proxy ---\n"
+docker build \
+    --build-arg newRelicAppName=${proxy[name]} \
+    --build-arg newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
+    --tag "${DOCKERHUB_NAME}/${proxy[name]}" \
+    ../../apps/proxy/.
+docker push "${DOCKERHUB_NAME}/${proxy[name]}"
+echo -e "\n------\n"
 
 # First
-echo -e "\n--- FIRST ---\n"
+echo -e "\n--- First ---\n"
 docker build \
-    --build-arg newRelicAppName=${first[name]} \
-    --build-arg newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
     --tag "${DOCKERHUB_NAME}/${first[name]}" \
     ../../apps/first/.
 docker push "${DOCKERHUB_NAME}/${first[name]}"
 echo -e "\n------\n"
 
 # Second
-echo -e "\n--- SECOND ---\n"
+echo -e "\n--- Second ---\n"
 docker build \
+    --build-arg newRelicAppName=${second[name]} \
+    --build-arg newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
     --tag "${DOCKERHUB_NAME}/${second[name]}" \
     ../../apps/second/.
 docker push "${DOCKERHUB_NAME}/${second[name]}"
 echo -e "\n------\n"
 
 # Third
-echo -e "\n--- THIRD ---\n"
+echo -e "\n--- Third ---\n"
 docker build \
-    --build-arg newRelicAppName=${third[name]} \
-    --build-arg newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
     --tag "${DOCKERHUB_NAME}/${third[name]}" \
     ../../apps/third/.
 docker push "${DOCKERHUB_NAME}/${third[name]}"
 echo -e "\n------\n"
 
-# Fourth
-echo -e "\n--- FOURTH ---\n"
+# Zipkin Exporter
+echo -e "\n--- Zipkin Exporter ---\n"
 docker build \
-    --tag "${DOCKERHUB_NAME}/${fourth[name]}" \
-    ../../apps/fourth/.
-docker push "${DOCKERHUB_NAME}/${fourth[name]}"
+    --tag "${DOCKERHUB_NAME}/${zipkinexporter[name]}" \
+    ../../apps/zipkinexporter/.
+docker push "${DOCKERHUB_NAME}/${zipkinexporter[name]}"
 echo -e "\n------\n"
+#########
 
-# Fifth
-echo -e "\n--- FIFTH ---\n"
-docker build \
-    --tag "${DOCKERHUB_NAME}/${fifth[name]}" \
-    ../../apps/fifth/.
-docker push "${DOCKERHUB_NAME}/${fifth[name]}"
-echo -e "\n------\n"
-
-# Newrelic
+################
+### Newrelic ###
+################
 echo "Deploying Newrelic ..."
 
 kubectl apply -f https://download.newrelic.com/install/kubernetes/pixie/latest/px.dev_viziers.yaml && \
@@ -117,8 +122,11 @@ kubectl create namespace newrelic ; helm upgrade --install newrelic-bundle newre
     --set pixie-chart.enabled=true \
     --set pixie-chart.deployKey=$PIXIE_DEPLOY_KEY \
     --set pixie-chart.clusterName=$aksName
+#########
 
-# Ingress Controller
+##########################
+### Ingress Controller ###
+##########################
 echo "Deploying Ingress Controller ..."
 
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && \
@@ -141,21 +149,47 @@ helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
     --set defaultBackend.image.image="defaultbackend-amd64" \
     --set defaultBackend.image.tag="1.5" \
     --set defaultBackend.image.digest=""
+#########
 
-# Zipkin
-echo "Deploying Zipkin ..."
+#############
+### Proxy ###
+#############
+echo "Deploying proxy..."
 
-helm upgrade ${zipkin[name]} \
+helm upgrade ${proxy[name]} \
     --install \
     --wait \
     --debug \
     --create-namespace \
-    --namespace ${zipkin[namespace]} \
+    --namespace ${proxy[namespace]} \
     --set dockerhubName=$DOCKERHUB_NAME \
-    ../charts/zipkin
+    ../charts/proxy
+
+appIdOfProxy=$(curl -X GET 'https://api.eu.newrelic.com/v2/applications.json' \
+    -H "Api-Key:${NEWRELIC_API_KEY}" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    | jq -r '.applications[] | select(.name==''"'${proxy[name]}'"'') | .id')
+
+timestampOfProxy=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+curl -X POST "https://api.eu.newrelic.com/v2/applications/$appIdOfProxy/deployments.json" \
+     -i \
+     -H "Api-Key:${NEWRELIC_API_KEY}" \
+     -H "Content-Type: application/json" \
+     -d \
+    '{
+        "deployment": {
+            "revision": "1.0.0",
+            "changelog": "Initial deployment",
+            "description": "Deploy the proxy app.",
+            "user": "datanerd@example.com",
+            "timestamp": "'"${timestampOfProxy}"'"
+        }
+    }'
+#########
 
 # First
-echo "Deploying first ..."
+echo "Deploying first..."
 
 helm upgrade ${first[name]} \
     --install \
@@ -165,31 +199,10 @@ helm upgrade ${first[name]} \
     --namespace ${first[namespace]} \
     --set dockerhubName=$DOCKERHUB_NAME \
     ../charts/first
-
-appIdOfFirst=$(curl -X GET 'https://api.eu.newrelic.com/v2/applications.json' \
-    -H "Api-Key:${NEWRELIC_API_KEY}" \
-    -H "Content-Type: application/json" \
-    -H "Accept: application/json" \
-    | jq -r '.applications[] | select(.name==''"'${first[name]}'"'') | .id')
-
-timestampOfFirst=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-curl -X POST "https://api.eu.newrelic.com/v2/applications/$appIdOfFirst/deployments.json" \
-     -i \
-     -H "Api-Key:${NEWRELIC_API_KEY}" \
-     -H "Content-Type: application/json" \
-     -d \
-    '{
-        "deployment": {
-            "revision": "1.0.0",
-            "changelog": "Initial deployment",
-            "description": "Deploy the first app for the first time.",
-            "user": "datanerd@example.com",
-            "timestamp": "'"${timestampOfFirst}"'"
-        }
-    }'
+#########
 
 # Second
-echo "Deploying second ..."
+echo "Deploying second..."
 
 helm upgrade ${second[name]} \
     --install \
@@ -199,10 +212,27 @@ helm upgrade ${second[name]} \
     --namespace ${second[namespace]} \
     --set dockerhubName=$DOCKERHUB_NAME \
     ../charts/second
+#########
 
-# Third
-echo "Deploying third ..."
+#################
+### Third App ###
+#################
 
+# Zipkin Server
+echo "Deploying Zipkin server..."
+
+helm upgrade ${zipkinserver[name]} \
+    --install \
+    --wait \
+    --debug \
+    --create-namespace \
+    --namespace ${zipkinserver[namespace]} \
+    --set dockerhubName=$DOCKERHUB_NAME \
+    ../charts/zipkinserver
+
+echo "Deploying third app..."
+
+# Third app
 helm upgrade ${third[name]} \
     --install \
     --wait \
@@ -212,27 +242,16 @@ helm upgrade ${third[name]} \
     --set dockerhubName=$DOCKERHUB_NAME \
     ../charts/third
 
-# Fourth
-echo "Deploying fourth ..."
+# Zipkin Exporter
+echo "Deploying Zipkin exporter..."
 
-helm upgrade ${fourth[name]} \
+helm upgrade ${zipkinexporter[name]} \
     --install \
     --wait \
     --debug \
     --create-namespace \
-    --namespace ${fourth[namespace]} \
-    --set dockerhubName=$DOCKERHUB_NAME \
-    ../charts/fourth
-
-# Fifth
-echo "Deploying fifth ..."
-
-helm upgrade ${fifth[name]} \
-    --install \
-    --wait \
-    --debug \
-    --create-namespace \
-    --namespace ${fifth[namespace]} \
+    --namespace ${zipkinexporter[namespace]} \
     --set dockerhubName=$DOCKERHUB_NAME \
     --set newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
-    ../charts/fifth
+    ../charts/zipkinexporter
+#########
