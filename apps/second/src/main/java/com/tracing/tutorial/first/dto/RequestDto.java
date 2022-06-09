@@ -1,4 +1,4 @@
-package com.tracing.tutorial.proxy.service.secondmethod.dto;
+package com.tracing.tutorial.first.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SecondMethodRequestModel {
+public class RequestDto {
 
     private String value;
     private String tag;

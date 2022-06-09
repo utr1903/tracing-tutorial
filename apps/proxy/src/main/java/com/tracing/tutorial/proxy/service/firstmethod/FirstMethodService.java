@@ -1,7 +1,7 @@
 package com.tracing.tutorial.proxy.service.firstmethod;
 
-import com.tracing.tutorial.proxy.service.firstmethod.dto.FirstMethodRequestModel;
-import com.tracing.tutorial.proxy.service.firstmethod.dto.FirstMethodResponseModel;
+import com.tracing.tutorial.proxy.dto.RequestDto;
+import com.tracing.tutorial.proxy.dto.ResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -25,16 +25,17 @@ public class FirstMethodService {
         this.restTemplate = new RestTemplateBuilder().build();
     }
 
-    public ResponseEntity<FirstMethodResponseModel> firstMethod(
-        FirstMethodRequestModel requestDto
+    public ResponseEntity<ResponseDto> firstMethod(
+        RequestDto requestDto
     ) {
 
         logger.info("Value provided: " + requestDto.getValue());
+        logger.info("Tag provided: " + requestDto.getTag());
 
-        ResponseEntity<FirstMethodResponseModel> responseDtoFromFirstService;
+        ResponseEntity<ResponseDto> responseDtoFromFirstService;
 
         try {
-            var model = new FirstMethodResponseModel();
+            var model = new ResponseDto();
 
             logger.info("Making a POST request to FirstService...");
 
@@ -46,9 +47,11 @@ public class FirstMethodService {
 
             if (statusCode == HttpStatus.OK) {
                 logger.info("Value retrieved: " + responseDtoFromFirstService.getBody().getValue());
+                logger.info("Tag retrieved: " + responseDtoFromFirstService.getBody().getTag());
 
                 model.setMessage("Succeeded.");
                 model.setValue(responseDtoFromFirstService.getBody().getValue());
+                model.setTag(responseDtoFromFirstService.getBody().getTag());
             }
             else
                 model.setMessage("Call to FirstService has failed.");
@@ -60,15 +63,15 @@ public class FirstMethodService {
         catch (Exception e) {
             logger.error(e.getMessage());
 
-            var model = new FirstMethodResponseModel();
+            var model = new ResponseDto();
             model.setMessage(e.getMessage());
 
             return new ResponseEntity(model, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    private ResponseEntity<FirstMethodResponseModel> makeRequestToFirstService(
-        FirstMethodRequestModel requestDto
+    private ResponseEntity<ResponseDto> makeRequestToFirstService(
+        RequestDto requestDto
     ) {
         var url = "http://first.first.svc.cluster.local:8080/first";
 
@@ -78,6 +81,6 @@ public class FirstMethodService {
 
         var entity = new HttpEntity<>(requestDto, headers);
 
-        return restTemplate.postForEntity(url, entity, FirstMethodResponseModel.class);
+        return restTemplate.postForEntity(url, entity, ResponseDto.class);
     }
 }

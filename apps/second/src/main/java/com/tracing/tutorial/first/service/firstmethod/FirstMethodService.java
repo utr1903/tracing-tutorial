@@ -1,7 +1,7 @@
-package com.tracing.tutorial.second.service.firstmethod;
+package com.tracing.tutorial.first.service.firstmethod;
 
-import com.tracing.tutorial.second.service.firstmethod.dto.FirstMethodRequestModel;
-import com.tracing.tutorial.second.service.firstmethod.dto.FirstMethodResponseModel;
+import com.tracing.tutorial.first.dto.RequestDto;
+import com.tracing.tutorial.first.dto.ResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -18,18 +18,17 @@ public class FirstMethodService {
 
     public FirstMethodService() {}
 
-    public ResponseEntity<FirstMethodResponseModel> firstMethod(
-        FirstMethodRequestModel requestDto
+    public ResponseEntity<ResponseDto> firstMethod(
+        RequestDto requestDto
     ) {
 
         logger.info("Value provided: " + requestDto.getValue());
 
-        FirstMethodResponseModel model = new FirstMethodResponseModel();
+        var model = new ResponseDto();
         model.setMessage("Succeeded.");
         model.setValue(requestDto.getValue());
 
-        ResponseEntity<FirstMethodResponseModel> responseDto =
-            new ResponseEntity(model, HttpStatus.OK);
+        var responseDto = new ResponseEntity(model, HttpStatus.OK);
 
         return responseDto;
     }

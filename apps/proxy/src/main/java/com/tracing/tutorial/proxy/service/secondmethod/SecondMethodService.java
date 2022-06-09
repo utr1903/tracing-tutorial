@@ -1,7 +1,7 @@
 package com.tracing.tutorial.proxy.service.secondmethod;
 
-import com.tracing.tutorial.proxy.service.secondmethod.dto.SecondMethodRequestModel;
-import com.tracing.tutorial.proxy.service.secondmethod.dto.SecondMethodResponseModel;
+import com.tracing.tutorial.proxy.dto.RequestDto;
+import com.tracing.tutorial.proxy.dto.ResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -25,23 +25,23 @@ public class SecondMethodService {
         this.restTemplate = new RestTemplateBuilder().build();
     }
 
-    public ResponseEntity<SecondMethodResponseModel> secondMethod(
-        SecondMethodRequestModel requestDto
+    public ResponseEntity<ResponseDto> secondMethod(
+        RequestDto requestDto
     ) {
 
         logger.info("Value provided: " + requestDto.getValue());
         logger.info("Tag provided: " + requestDto.getTag());
 
-        ResponseEntity<SecondMethodResponseModel> responseDtoFromSecondService;
+        ResponseEntity<ResponseDto> responseDtoFromSecondService;
 
         try {
-            SecondMethodResponseModel model = new SecondMethodResponseModel();
+            var model = new ResponseDto();
 
             logger.info("Making a POST request to SecondService...");
 
             responseDtoFromSecondService = makeRequestToSecondService(requestDto);
 
-            HttpStatus statusCode = responseDtoFromSecondService.getStatusCode();
+            var statusCode = responseDtoFromSecondService.getStatusCode();
             logger.info("Status code: " + statusCode);
             logger.info("Message: " + responseDtoFromSecondService.getBody().getMessage());
 
@@ -63,24 +63,24 @@ public class SecondMethodService {
         catch (Exception e) {
             logger.error(e.getMessage());
 
-            SecondMethodResponseModel model = new SecondMethodResponseModel();
+            var model = new ResponseDto();
             model.setMessage(e.getMessage());
 
             return new ResponseEntity(model, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    private ResponseEntity<SecondMethodResponseModel> makeRequestToSecondService(
-        SecondMethodRequestModel requestDto
+    private ResponseEntity<ResponseDto> makeRequestToSecondService(
+        RequestDto requestDto
     ) {
-        String url = "http://second.second.svc.cluster.local:8080/second";
+        var url = "http://second.second.svc.cluster.local:8080/second";
 
-        HttpHeaders headers = new HttpHeaders();
+        var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-        HttpEntity<SecondMethodRequestModel> entity = new HttpEntity<>(requestDto, headers);
+        var entity = new HttpEntity<>(requestDto, headers);
 
-        return restTemplate.postForEntity(url, entity, SecondMethodResponseModel.class);
+        return restTemplate.postForEntity(url, entity, ResponseDto.class);
     }
 }

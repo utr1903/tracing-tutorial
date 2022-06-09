@@ -1,14 +1,10 @@
 package com.tracing.tutorial.proxy.controller;
 
+import com.tracing.tutorial.proxy.dto.RequestDto;
+import com.tracing.tutorial.proxy.dto.ResponseDto;
 import com.tracing.tutorial.proxy.service.firstmethod.FirstMethodService;
-import com.tracing.tutorial.proxy.service.firstmethod.dto.FirstMethodRequestModel;
-import com.tracing.tutorial.proxy.service.firstmethod.dto.FirstMethodResponseModel;
 import com.tracing.tutorial.proxy.service.secondmethod.SecondMethodService;
-import com.tracing.tutorial.proxy.service.secondmethod.dto.SecondMethodRequestModel;
-import com.tracing.tutorial.proxy.service.secondmethod.dto.SecondMethodResponseModel;
 import com.tracing.tutorial.proxy.service.thirdmethod.ThirdMethodService;
-import com.tracing.tutorial.proxy.service.thirdmethod.dto.ThirdMethodRequestModel;
-import com.tracing.tutorial.proxy.service.thirdmethod.dto.ThirdMethodResponseModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,8 +56,8 @@ public class ProxyAppController {
     }
 
     @PostMapping("method1")
-    public ResponseEntity<FirstMethodResponseModel> firstMethod(
-        @RequestBody FirstMethodRequestModel requestDto
+    public ResponseEntity<ResponseDto> firstMethod(
+        @RequestBody RequestDto requestDto
     ) {
         logger.info("First method is triggered...");
 
@@ -73,8 +69,8 @@ public class ProxyAppController {
     }
 
     @PostMapping("method2")
-    public ResponseEntity<SecondMethodResponseModel> secondMethod(
-            @RequestBody SecondMethodRequestModel requestDto
+    public ResponseEntity<ResponseDto> secondMethod(
+            @RequestBody RequestDto requestDto
     ) {
         logger.info("Second method is triggered...");
 
@@ -86,8 +82,8 @@ public class ProxyAppController {
     }
 
     @PostMapping("method3")
-    public ResponseEntity<ThirdMethodResponseModel> thirdMethod(
-            @RequestBody ThirdMethodRequestModel requestDto
+    public ResponseEntity<ResponseDto> thirdMethod(
+            @RequestBody RequestDto requestDto
     ) {
         logger.info("Third method is triggered...");
 

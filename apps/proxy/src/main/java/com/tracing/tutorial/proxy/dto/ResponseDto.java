@@ -1,4 +1,4 @@
-package com.tracing.tutorial.proxy.service.firstmethod.dto;
+package com.tracing.tutorial.proxy.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FirstMethodRequestModel {
+public class ResponseDto {
 
+    private String message;
     private String value;
+    private String tag;
 }

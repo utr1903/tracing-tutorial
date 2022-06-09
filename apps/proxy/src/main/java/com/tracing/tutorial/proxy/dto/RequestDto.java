@@ -1,6 +1,5 @@
-package com.tracing.tutorial.proxy.service.secondmethod.dto;
+package com.tracing.tutorial.proxy.dto;
 
-import com.tracing.tutorial.proxy.dto.BaseResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SecondMethodResponseModel extends BaseResponseDto {
+public class RequestDto {
 
     private String value;
     private String tag;

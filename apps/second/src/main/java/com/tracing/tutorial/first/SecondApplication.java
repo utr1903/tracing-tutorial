@@ -1,4 +1,4 @@
-package com.tracing.tutorial.second;
+package com.tracing.tutorial.first;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
