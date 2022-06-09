@@ -188,8 +188,8 @@ helm upgrade ${proxy[name]} \
 #     }'
 #########
 
-# First
-echo "Deploying first..."
+# First app
+echo "Deploying first app..."
 
 helm upgrade ${first[name]} \
     --install \
@@ -201,8 +201,8 @@ helm upgrade ${first[name]} \
     "../charts/${first[name]}"
 #########
 
-# Second
-echo "Deploying second..."
+# Second app
+echo "Deploying second app..."
 
 helm upgrade ${second[name]} \
     --install \
