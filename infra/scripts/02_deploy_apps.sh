@@ -58,7 +58,7 @@ docker build \
     --build-arg newRelicAppName=${proxy[name]} \
     --build-arg newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
     --tag "${DOCKERHUB_NAME}/${proxy[name]}" \
-    ../../apps/proxy/.
+    "../../apps/${proxy[name]}/."
 docker push "${DOCKERHUB_NAME}/${proxy[name]}"
 echo -e "\n------\n"
 
@@ -66,7 +66,7 @@ echo -e "\n------\n"
 echo -e "\n--- First ---\n"
 docker build \
     --tag "${DOCKERHUB_NAME}/${first[name]}" \
-    ../../apps/first/.
+    "../../apps/${first[name]}/."
 docker push "${DOCKERHUB_NAME}/${first[name]}"
 echo -e "\n------\n"
 
@@ -76,7 +76,7 @@ docker build \
     --build-arg newRelicAppName=${second[name]} \
     --build-arg newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
     --tag "${DOCKERHUB_NAME}/${second[name]}" \
-    ../../apps/second/.
+    "../../apps/${second[name]}/."
 docker push "${DOCKERHUB_NAME}/${second[name]}"
 echo -e "\n------\n"
 
@@ -84,7 +84,7 @@ echo -e "\n------\n"
 echo -e "\n--- Third ---\n"
 docker build \
     --tag "${DOCKERHUB_NAME}/${third[name]}" \
-    ../../apps/third/.
+    "../../apps/${third[name]}/."
 docker push "${DOCKERHUB_NAME}/${third[name]}"
 echo -e "\n------\n"
 
@@ -92,7 +92,7 @@ echo -e "\n------\n"
 echo -e "\n--- Zipkin Exporter ---\n"
 docker build \
     --tag "${DOCKERHUB_NAME}/${zipkinexporter[name]}" \
-    ../../apps/zipkinexporter/.
+    "../../apps/${zipkinexporter[name]}/."
 docker push "${DOCKERHUB_NAME}/${zipkinexporter[name]}"
 echo -e "\n------\n"
 #########
@@ -163,7 +163,7 @@ helm upgrade ${proxy[name]} \
     --create-namespace \
     --namespace ${proxy[namespace]} \
     --set dockerhubName=$DOCKERHUB_NAME \
-    ../charts/proxy
+    "../charts/${proxy[name]}"
 
 appIdOfProxy=$(curl -X GET 'https://api.eu.newrelic.com/v2/applications.json' \
     -H "Api-Key:${NEWRELIC_API_KEY}" \
@@ -198,7 +198,7 @@ helm upgrade ${first[name]} \
     --create-namespace \
     --namespace ${first[namespace]} \
     --set dockerhubName=$DOCKERHUB_NAME \
-    ../charts/first
+    "../charts/${first[name]}"
 #########
 
 # Second
@@ -211,7 +211,7 @@ helm upgrade ${second[name]} \
     --create-namespace \
     --namespace ${second[namespace]} \
     --set dockerhubName=$DOCKERHUB_NAME \
-    ../charts/second
+    "../charts/${second[name]}"
 #########
 
 #################
@@ -228,7 +228,7 @@ helm upgrade ${zipkinserver[name]} \
     --create-namespace \
     --namespace ${zipkinserver[namespace]} \
     --set dockerhubName=$DOCKERHUB_NAME \
-    ../charts/zipkinserver
+    "../charts/${zipkinserver[name]}"
 
 echo "Deploying third app..."
 
@@ -240,7 +240,7 @@ helm upgrade ${third[name]} \
     --create-namespace \
     --namespace ${third[namespace]} \
     --set dockerhubName=$DOCKERHUB_NAME \
-    ../charts/third
+    "../charts/${third[name]}"
 
 # Zipkin Exporter
 echo "Deploying Zipkin exporter..."
@@ -253,5 +253,5 @@ helm upgrade ${zipkinexporter[name]} \
     --namespace ${zipkinexporter[namespace]} \
     --set dockerhubName=$DOCKERHUB_NAME \
     --set newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
-    ../charts/zipkinexporter
+    "../charts/${zipkinexporter[name]}"
 #########
