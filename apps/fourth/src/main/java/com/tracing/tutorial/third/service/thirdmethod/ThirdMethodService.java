@@ -1,7 +1,7 @@
-package com.tracing.tutorial.fourth.service.thirdmethod;
+package com.tracing.tutorial.third.service.thirdmethod;
 
-import com.tracing.tutorial.fourth.service.thirdmethod.dto.ThirdMethodRequestModel;
-import com.tracing.tutorial.fourth.service.thirdmethod.dto.ThirdMethodResponseModel;
+import com.tracing.tutorial.third.dto.RequestDto;
+import com.tracing.tutorial.third.dto.ResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -18,15 +18,17 @@ public class ThirdMethodService {
 
     public ThirdMethodService() {}
 
-    public ResponseEntity<ThirdMethodResponseModel> thirdMethod(
-        ThirdMethodRequestModel requestDto
+    public ResponseEntity<ResponseDto> thirdMethod(
+        RequestDto requestDto
     ) {
 
         logger.info("Value provided: " + requestDto.getValue());
+        logger.info("Tag provided: " + requestDto.getTag());
 
-        var model = new ThirdMethodResponseModel();
+        var model = new ResponseDto();
         model.setMessage("Succeeded.");
         model.setValue(requestDto.getValue());
+        model.setTag(requestDto.getTag());
 
         var responseDto = new ResponseEntity(model, HttpStatus.OK);
 

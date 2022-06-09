@@ -1,9 +1,9 @@
-package com.tracing.tutorial.fourth.controller;
+package com.tracing.tutorial.third.controller;
 
 import brave.Tracer;
-import com.tracing.tutorial.fourth.service.thirdmethod.ThirdMethodService;
-import com.tracing.tutorial.fourth.service.thirdmethod.dto.ThirdMethodRequestModel;
-import com.tracing.tutorial.fourth.service.thirdmethod.dto.ThirdMethodResponseModel;
+import com.tracing.tutorial.third.dto.RequestDto;
+import com.tracing.tutorial.third.dto.ResponseDto;
+import com.tracing.tutorial.third.service.thirdmethod.ThirdMethodService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("fourth")
-public class FourthAppController {
+@RequestMapping("third")
+public class ThirdAppController {
 
-    private final Logger logger = LoggerFactory.getLogger(FourthAppController.class);
+    private final Logger logger = LoggerFactory.getLogger(ThirdAppController.class);
 
     @Autowired
     private ThirdMethodService firstMethodService;
@@ -25,9 +25,9 @@ public class FourthAppController {
     private Tracer tracer;
 
     @PostMapping
-    public ResponseEntity<ThirdMethodResponseModel> thirdMethod(
+    public ResponseEntity<ResponseDto> thirdMethod(
             @RequestHeader Map<String, String> headers,
-            @RequestBody ThirdMethodRequestModel requestDto
+            @RequestBody RequestDto requestDto
     ) {
         logger.info("Third Method is triggered...");
 
