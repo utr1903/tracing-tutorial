@@ -1,5 +1,5 @@
-name: first
-namespace: first
+name: proxy
+namespace: proxy
 port: 8080
 
 hpa:
