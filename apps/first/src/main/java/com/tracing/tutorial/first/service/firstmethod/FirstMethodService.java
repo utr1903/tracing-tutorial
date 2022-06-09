@@ -27,6 +27,7 @@ public class FirstMethodService {
         var model = new ResponseDto();
         model.setMessage("Succeeded.");
         model.setValue(requestDto.getValue());
+        model.setTag(requestDto.getTag());
 
         var responseDto = new ResponseEntity(model, HttpStatus.OK);
 

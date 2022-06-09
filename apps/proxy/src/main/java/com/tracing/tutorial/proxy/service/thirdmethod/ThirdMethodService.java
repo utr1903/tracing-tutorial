@@ -50,7 +50,7 @@ public class ThirdMethodService {
 
                 model.setMessage("Succeeded.");
                 model.setValue(responseDtoFromThirdService.getBody().getValue());
-                model.setValue(responseDtoFromThirdService.getBody().getTag());
+                model.setTag(responseDtoFromThirdService.getBody().getTag());
             }
             else
                 model.setMessage("Call to ThirdService has failed.");

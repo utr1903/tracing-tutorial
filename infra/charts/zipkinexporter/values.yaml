@@ -1,5 +1,5 @@
 name: zipkinexporter
-namespace: zipkinexporter
+namespace: third
 port: 8080
 
 hpa:
