@@ -1,5 +1,5 @@
-name: fourth
-namespace: fourth
+name: second
+namespace: second
 port: 8080
 
 hpa:
