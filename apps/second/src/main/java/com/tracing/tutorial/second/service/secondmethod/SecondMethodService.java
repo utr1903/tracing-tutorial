@@ -1,7 +1,7 @@
-package com.tracing.tutorial.first.service.firstmethod;
+package com.tracing.tutorial.second.service.secondmethod;
 
-import com.tracing.tutorial.first.dto.RequestDto;
-import com.tracing.tutorial.first.dto.ResponseDto;
+import com.tracing.tutorial.second.dto.RequestDto;
+import com.tracing.tutorial.second.dto.ResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -12,17 +12,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class FirstMethodService {
+public class SecondMethodService {
 
-    private final Logger logger = LoggerFactory.getLogger(FirstMethodService.class);
+    private final Logger logger = LoggerFactory.getLogger(SecondMethodService.class);
 
-    public FirstMethodService() {}
+    public SecondMethodService() {}
 
-    public ResponseEntity<ResponseDto> firstMethod(
-        RequestDto requestDto
+    public ResponseEntity<ResponseDto> secondMethod(
+            RequestDto requestDto
     ) {
 
         logger.info("Value provided: " + requestDto.getValue());
+        logger.info("Tag provided: " + requestDto.getTag());
 
         var model = new ResponseDto();
         model.setMessage("Succeeded.");
