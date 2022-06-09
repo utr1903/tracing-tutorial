@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.tracing.tutorial</groupId>
-	<artifactId>second</artifactId>
+	<artifactId>first</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>second</name>
+	<name>first</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
