@@ -11,7 +11,7 @@ locationShort="euw"
 project="tracing"
 stageLong="dev"
 stageShort="d"
-instance="005"
+instance="001"
 
 kubernetesVersion="1.23.5"
 kubernetesMasterNodeCount="3"
@@ -19,8 +19,8 @@ kubernetesMasterNodeCountMin="3"
 kubernetesMasterNodeCountMax="4"
 
 ### Variables
-resourceGroupName="rg-$program-$locationShort-$project-$stageShort-$instance"
-aksName="aks-$program-$locationShort-$project-$stageShort-$instance"
+resourceGroupName="rg$program$locationShort$project$stageShort$instance"
+aksName="aks$program$locationShort$project$stageShort$instance"
 
 ### Resource Group
 echo "Checking resource group [$resourceGroupName] ..."

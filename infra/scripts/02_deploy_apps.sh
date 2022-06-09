@@ -11,12 +11,12 @@ locationShort="euw"
 project="tracing"
 stageLong="dev"
 stageShort="d"
-instance="005"
+instance="001"
 
 ### Set variables
 
 # AKS
-aksName="aks-$program-$locationShort-$project-$stageShort-$instance"
+aksName="aks$program$locationShort$project$stageShort$instance"
 
 # Proxy
 declare -A proxy
