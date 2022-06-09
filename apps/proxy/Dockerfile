@@ -6,7 +6,7 @@ RUN mvn -f /home/app/pom.xml clean package
 
 # Package stage
 FROM openjdk:11-jre-slim
-COPY --from=build /home/app/target/first-0.0.1-SNAPSHOT.jar /usr/local/lib/first.jar
+COPY --from=build /home/app/target/proxy-0.0.1-SNAPSHOT.jar /usr/local/lib/proxy.jar
 
 ARG newRelicAppName
 ARG newRelicLicenseKey
@@ -23,4 +23,4 @@ RUN sed -i s/"NEW_RELIC_LICENSE_KEY"/$newRelicLicenseKey/g /usr/local/lib/newrel
 
 EXPOSE 8080
 
-ENTRYPOINT ["java","-javaagent:/usr/local/lib/newrelic.jar","-jar","/usr/local/lib/first.jar"]
+ENTRYPOINT ["java","-javaagent:/usr/local/lib/newrelic.jar","-jar","/usr/local/lib/proxy.jar"]
