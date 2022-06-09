@@ -1,8 +1,8 @@
-package com.tracing.tutorial.third.controller;
+package com.tracing.tutorial.second.controller;
 
-import com.tracing.tutorial.third.service.secondmethod.SecondMethodService;
-import com.tracing.tutorial.third.service.secondmethod.dto.SecondMethodRequestModel;
-import com.tracing.tutorial.third.service.secondmethod.dto.SecondMethodResponseModel;
+import com.tracing.tutorial.second.dto.RequestDto;
+import com.tracing.tutorial.second.dto.ResponseDto;
+import com.tracing.tutorial.second.service.secondmethod.SecondMethodService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,21 +13,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("third")
-public class ThirdAppController {
+@RequestMapping("second")
+public class SecondAppController {
 
-    private final Logger logger = LoggerFactory.getLogger(ThirdAppController.class);
+    private final Logger logger = LoggerFactory.getLogger(SecondAppController.class);
 
     @Autowired
     private SecondMethodService secondMethodService;
 
     @PostMapping
-    public ResponseEntity<SecondMethodResponseModel> secondMethod(
-            @RequestBody SecondMethodRequestModel requestDto
+    public ResponseEntity<ResponseDto> secondMethod(
+            @RequestBody RequestDto requestDto
     ) {
         logger.info("Second Method is triggered...");
 
-        ResponseEntity<SecondMethodResponseModel> responseDto =
+        ResponseEntity<ResponseDto> responseDto =
                 secondMethodService.secondMethod(requestDto);
 
         logger.info("Second Method is executed successfully...");

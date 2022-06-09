@@ -1,7 +1,7 @@
-package com.tracing.tutorial.third.service.secondmethod;
+package com.tracing.tutorial.second.service.secondmethod;
 
-import com.tracing.tutorial.third.service.secondmethod.dto.SecondMethodRequestModel;
-import com.tracing.tutorial.third.service.secondmethod.dto.SecondMethodResponseModel;
+import com.tracing.tutorial.second.dto.RequestDto;
+import com.tracing.tutorial.second.dto.ResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -18,20 +18,19 @@ public class SecondMethodService {
 
     public SecondMethodService() {}
 
-    public ResponseEntity<SecondMethodResponseModel> secondMethod(
-            SecondMethodRequestModel requestDto
+    public ResponseEntity<ResponseDto> secondMethod(
+            RequestDto requestDto
     ) {
 
         logger.info("Value provided: " + requestDto.getValue());
         logger.info("Tag provided: " + requestDto.getTag());
 
-        SecondMethodResponseModel model = new SecondMethodResponseModel();
+        var model = new ResponseDto();
         model.setMessage("Succeeded.");
         model.setValue(requestDto.getValue());
         model.setTag(requestDto.getTag());
 
-        ResponseEntity<SecondMethodResponseModel> responseDto =
-            new ResponseEntity(model, HttpStatus.OK);
+        var responseDto = new ResponseEntity(model, HttpStatus.OK);
 
         return responseDto;
     }
