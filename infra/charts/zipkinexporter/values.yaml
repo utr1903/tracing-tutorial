@@ -1,5 +1,5 @@
-name: fifth
-namespace: fifth
+name: zipkinexporter
+namespace: zipkinexporter
 port: 8080
 
 hpa:
